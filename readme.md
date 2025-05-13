@@ -1,5 +1,2111 @@
 # Materi Tambahan untuk Pembelajaran Data Science
 
+# FUNDAMENTAL DATA SCIENCE
+
+## 00_Fundamentals
+
+### Programming_Basics
+
+#### Python_Fundamentals
+
+Python adalah bahasa pemrograman yang paling populer di bidang data science karena sintaksnya yang mudah dibaca dan banyaknya library untuk analisis data dan machine learning.
+
+**Variabel dan Tipe Data**
+
+```python
+# Variabel dan tipe data dasar
+x = 10                # integer
+y = 3.14              # float
+name = "Data Science" # string
+is_valid = True       # boolean
+
+# List (array yang dapat diubah)
+numbers = [1, 2, 3, 4, 5]
+mixed = [1, "dua", 3.0, True]
+numbers.append(6)     # Menambah elemen
+numbers[0] = 10       # Mengubah elemen
+
+# Tuples (array yang tidak dapat diubah)
+coordinates = (10.5, 20.8)
+
+# Dictionary (key-value pairs)
+person = {
+    "name": "John",
+    "age": 30,
+    "skills": ["Python", "SQL"]
+}
+```
+
+**Kontrol Alur Program**
+
+```python
+# If-else statement
+x = 10
+if x > 5:
+    print("x lebih besar dari 5")
+elif x == 5:
+    print("x sama dengan 5")
+else:
+    print("x kurang dari 5")
+
+# Loops
+# For loop
+for i in range(5):  # 0, 1, 2, 3, 4
+    print(i)
+
+# While loop
+count = 0
+while count < 5:
+    print(count)
+    count += 1
+```
+
+**Fungsi**
+
+```python
+# Definisi fungsi
+def square(x):
+    return x * x
+
+# Fungsi dengan multiple parameters
+def calculate_statistics(numbers):
+    total = sum(numbers)
+    average = total / len(numbers)
+    variance = sum((x - average) ** 2 for x in numbers) / len(numbers)
+    std_dev = variance ** 0.5
+    return average, variance, std_dev
+
+# Memanggil fungsi
+nums = [1, 2, 3, 4, 5]
+avg, var, std = calculate_statistics(nums)
+print(f"Average: {avg}, Variance: {var}, Standard Deviation: {std}")
+```
+
+**List Comprehensions**
+
+```python
+# List comprehension - cara singkat membuat list
+squares = [x**2 for x in range(10)]
+even_squares = [x**2 for x in range(10) if x % 2 == 0]
+```
+
+**Import Modules**
+
+```python
+# Import modul standar
+import math
+import random
+from datetime import datetime
+
+# Import modul data science
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+#### Data_Manipulation_with_Pandas
+
+Pandas adalah library Python yang sangat powerful untuk manipulasi dan analisis data.
+
+**Series dan DataFrame**
+
+```python
+import pandas as pd
+import numpy as np
+
+# Membuat Series (1D array dengan label)
+s = pd.Series([1, 3, 5, np.nan, 6, 8])
+print(s)
+
+# Membuat DataFrame (2D table)
+data = {
+    'nama': ['Andi', 'Budi', 'Cindy', 'Deni'],
+    'usia': [25, 30, 35, 40],
+    'kota': ['Jakarta', 'Bandung', 'Surabaya', 'Yogyakarta']
+}
+df = pd.DataFrame(data)
+print(df)
+```
+
+**Membaca dan Menulis Data**
+
+```python
+# Membaca dari CSV
+df = pd.read_csv('data.csv')
+
+# Membaca dari Excel
+df = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+
+# Menulis ke CSV
+df.to_csv('output.csv', index=False)
+
+# Menulis ke Excel
+df.to_excel('output.xlsx', index=False)
+```
+
+**Inspeksi Data**
+
+```python
+# Melihat beberapa baris pertama
+print(df.head())
+
+# Melihat beberapa baris terakhir
+print(df.tail())
+
+# Informasi tentang DataFrame
+print(df.info())
+
+# Statistik deskriptif
+print(df.describe())
+
+# Dimensi DataFrame
+print(df.shape)  # (rows, columns)
+```
+
+**Seleksi dan Filtering Data**
+
+```python
+# Seleksi kolom
+names = df['nama']
+subset = df[['nama', 'usia']]
+
+# Seleksi baris dengan loc (label-based)
+row = df.loc[0]  # baris pertama
+subset = df.loc[0:2]  # baris 0, 1, dan 2
+
+# Seleksi baris dengan iloc (integer-based)
+row = df.iloc[0]  # baris pertama
+subset = df.iloc[0:2]  # baris 0 dan 1
+
+# Filtering dengan kondisi
+adults = df[df['usia'] > 30]
+jakarta_people = df[df['kota'] == 'Jakarta']
+
+# Filtering dengan multiple kondisi
+jakarta_adults = df[(df['kota'] == 'Jakarta') & (df['usia'] > 30)]
+```
+
+**Manipulasi Data**
+
+```python
+# Menambah kolom baru
+df['kategori_usia'] = ['Muda' if age < 30 else 'Dewasa' for age in df['usia']]
+
+# Mengganti nilai
+df['kota'] = df['kota'].replace('Jakarta', 'DKI Jakarta')
+
+# Menghapus kolom
+df_subset = df.drop('kategori_usia', axis=1)
+
+# Menghapus baris
+df_cleaned = df.drop([0, 2], axis=0)  # Menghapus baris 0 dan 2
+
+# Sorting
+df_sorted = df.sort_values('usia', ascending=False)
+```
+
+**Grouping dan Aggregasi**
+
+```python
+# Group by dan aggregasi
+by_city = df.groupby('kota')
+city_stats = by_city.agg({
+    'usia': ['mean', 'min', 'max', 'count']
+})
+
+# Pivot tables
+pivot = pd.pivot_table(df,
+                       values='usia',
+                       index='kota',
+                       columns='kategori_usia',
+                       aggfunc='mean')
+```
+
+**Handling Missing Values**
+
+```python
+# Mendeteksi missing values
+print(df.isnull().sum())
+
+# Mengisi missing values
+df['usia'].fillna(df['usia'].mean(), inplace=True)  # dengan mean
+df['kota'].fillna('Unknown', inplace=True)  # dengan value tertentu
+
+# Menghapus baris dengan missing values
+df.dropna(inplace=True)
+```
+
+**Merge dan Join Data**
+
+```python
+# Data tambahan
+data2 = {
+    'nama': ['Andi', 'Budi', 'Cindy', 'Edi'],
+    'gaji': [5000000, 6000000, 7000000, 5500000]
+}
+df2 = pd.DataFrame(data2)
+
+# Merge (SQL-like join)
+merged = pd.merge(df, df2, on='nama', how='inner')  # inner join
+merged_left = pd.merge(df, df2, on='nama', how='left')  # left join
+merged_outer = pd.merge(df, df2, on='nama', how='outer')  # outer join
+```
+
+**Transformasi Data**
+
+```python
+# Apply function ke kolom
+df['usia_5tahun'] = df['usia'].apply(lambda x: x + 5)
+
+# Apply function ke setiap baris
+def get_status(row):
+    if row['usia'] < 30:
+        return 'Junior'
+    elif row['usia'] < 40:
+        return 'Mid-level'
+    else:
+        return 'Senior'
+
+df['status'] = df.apply(get_status, axis=1)
+```
+
+#### SQL_Basics
+
+SQL (Structured Query Language) adalah bahasa standar untuk mengakses dan memanipulasi database.
+
+**Basic SELECT Statement**
+
+```sql
+-- Mengambil semua kolom dari tabel
+SELECT * FROM employees;
+
+-- Mengambil kolom tertentu
+SELECT employee_id, first_name, last_name FROM employees;
+
+-- Menampilkan data unik
+SELECT DISTINCT department_id FROM employees;
+
+-- Membatasi jumlah hasil
+SELECT * FROM employees LIMIT 10;
+```
+
+**WHERE Clause**
+
+```sql
+-- Filter data
+SELECT * FROM employees WHERE salary > 5000;
+
+-- Multiple conditions
+SELECT * FROM employees
+WHERE department_id = 10 AND salary > 5000;
+
+SELECT * FROM employees
+WHERE department_id = 10 OR department_id = 20;
+
+-- IN operator
+SELECT * FROM employees
+WHERE department_id IN (10, 20, 30);
+
+-- BETWEEN operator
+SELECT * FROM employees
+WHERE salary BETWEEN 5000 AND 10000;
+
+-- LIKE operator (pattern matching)
+SELECT * FROM employees
+WHERE last_name LIKE 'S%';  -- Nama belakang yang dimulai dengan S
+```
+
+**ORDER BY**
+
+```sql
+-- Sorting data
+SELECT * FROM employees ORDER BY salary DESC;  -- Descending
+SELECT * FROM employees ORDER BY department_id ASC, salary DESC;  -- Multiple columns
+```
+
+**Aggregasi**
+
+```sql
+-- Fungsi agregasi
+SELECT
+    COUNT(*) as total_employees,
+    AVG(salary) as average_salary,
+    MIN(salary) as min_salary,
+    MAX(salary) as max_salary,
+    SUM(salary) as total_salary
+FROM employees;
+
+-- Dengan Group By
+SELECT
+    department_id,
+    COUNT(*) as employee_count,
+    AVG(salary) as average_salary
+FROM employees
+GROUP BY department_id;
+
+-- Dengan filter setelah group by
+SELECT
+    department_id,
+    COUNT(*) as employee_count,
+    AVG(salary) as average_salary
+FROM employees
+GROUP BY department_id
+HAVING COUNT(*) > 5;
+```
+
+**JOIN**
+
+```sql
+-- Inner Join
+SELECT e.employee_id, e.first_name, e.last_name, d.department_name
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id;
+
+-- Left Join
+SELECT e.employee_id, e.first_name, e.last_name, d.department_name
+FROM employees e
+LEFT JOIN departments d ON e.department_id = d.department_id;
+
+-- Right Join
+SELECT e.employee_id, e.first_name, e.last_name, d.department_name
+FROM employees e
+RIGHT JOIN departments d ON e.department_id = d.department_id;
+
+-- Full Outer Join
+SELECT e.employee_id, e.first_name, e.last_name, d.department_name
+FROM employees e
+FULL OUTER JOIN departments d ON e.department_id = d.department_id;
+```
+
+**Subqueries**
+
+```sql
+-- Subquery in WHERE
+SELECT employee_id, first_name, last_name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+
+-- Subquery in FROM
+SELECT dept.department_id, dept.employee_count
+FROM (
+    SELECT department_id, COUNT(*) as employee_count
+    FROM employees
+    GROUP BY department_id
+) dept
+WHERE dept.employee_count > 10;
+```
+
+**INSERT, UPDATE, DELETE**
+
+```sql
+-- Insert data
+INSERT INTO employees (employee_id, first_name, last_name, salary)
+VALUES (1001, 'John', 'Doe', 5000);
+
+-- Update data
+UPDATE employees
+SET salary = salary * 1.1
+WHERE department_id = 10;
+
+-- Delete data
+DELETE FROM employees
+WHERE employee_id = 1001;
+```
+
+**Creating Tables**
+
+```sql
+-- Create table
+CREATE TABLE projects (
+    project_id INT PRIMARY KEY,
+    project_name VARCHAR(100) NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    budget DECIMAL(15,2),
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
+);
+```
+
+### Mathematics_and_Statistics
+
+#### Descriptive_Statistics
+
+Statistik deskriptif adalah metode untuk merangkum dan mendeskripsikan data.
+
+**Ukuran Pemusatan**
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Data sampel
+data = [12, 15, 18, 22, 30, 31, 35, 40, 41, 45, 50]
+
+# Mean (rata-rata)
+mean = np.mean(data)
+print(f"Mean: {mean}")
+
+# Median (nilai tengah)
+median = np.median(data)
+print(f"Median: {median}")
+
+# Mode (nilai yang paling sering muncul)
+from scipy import stats
+mode = stats.mode(data)[0][0]
+print(f"Mode: {mode}")
+
+# Quartiles (pembagian data menjadi 4 bagian)
+q1 = np.percentile(data, 25)  # Quartil pertama
+q2 = np.percentile(data, 50)  # Quartil kedua (median)
+q3 = np.percentile(data, 75)  # Quartil ketiga
+print(f"Q1: {q1}, Q2: {q2}, Q3: {q3}")
+```
+
+**Ukuran Penyebaran**
+
+```python
+# Range (rentang)
+data_range = max(data) - min(data)
+print(f"Range: {data_range}")
+
+# Variance (varians)
+variance = np.var(data, ddof=1)  # ddof=1 untuk sample variance
+print(f"Variance: {variance}")
+
+# Standard Deviation (standar deviasi)
+std_dev = np.std(data, ddof=1)
+print(f"Standard Deviation: {std_dev}")
+
+# Interquartile Range (IQR)
+iqr = q3 - q1
+print(f"IQR: {iqr}")
+
+# Coefficient of Variation (koefisien variasi)
+cv = (std_dev / mean) * 100
+print(f"Coefficient of Variation: {cv}%")
+```
+
+**Distribusi Data**
+
+```python
+# Histogram untuk visualisasi distribusi
+plt.figure(figsize=(10, 6))
+plt.hist(data, bins=5, edgecolor='black', alpha=0.7)
+plt.title('Histogram Data')
+plt.xlabel('Value')
+plt.ylabel('Frequency')
+plt.grid(axis='y', alpha=0.75)
+plt.show()
+
+# Skewness (kemiringan)
+from scipy.stats import skew
+skewness = skew(data)
+print(f"Skewness: {skewness}")
+# Positif: ekor panjang ke kanan
+# Negatif: ekor panjang ke kiri
+# Mendekati 0: simetris
+
+# Kurtosis (keruncingan)
+from scipy.stats import kurtosis
+kurt = kurtosis(data)
+print(f"Kurtosis: {kurt}")
+# Positif: lebih runcing dari distribusi normal
+# Negatif: lebih datar dari distribusi normal
+# Mendekati 0: seperti distribusi normal
+```
+
+**Visualisasi Deskriptif**
+
+```python
+# Box plot
+plt.figure(figsize=(10, 6))
+plt.boxplot(data, vert=False)
+plt.title('Box Plot Data')
+plt.xlabel('Value')
+plt.grid(axis='x', alpha=0.75)
+plt.show()
+
+# QQ plot untuk memeriksa normalitas
+from scipy import stats
+plt.figure(figsize=(10, 6))
+stats.probplot(data, dist="norm", plot=plt)
+plt.title('Q-Q Plot')
+plt.grid(True)
+plt.show()
+```
+
+**Analisis Deskriptif dengan Pandas**
+
+```python
+# Membuat DataFrame untuk analisis
+df = pd.DataFrame({'values': data})
+
+# Statistik deskriptif lengkap
+desc_stats = df.describe()
+print(desc_stats)
+
+# Menambahkan statistik tambahan
+desc_stats.loc['skew'] = df.skew().values
+desc_stats.loc['kurtosis'] = df.kurtosis().values
+desc_stats.loc['median'] = df.median().values
+desc_stats.loc['mode'] = df.mode().values[0]
+print(desc_stats)
+```
+
+#### Probability_Basics
+
+Probabilitas adalah studi tentang kemungkinan kejadian.
+
+**Konsep Dasar**
+
+```python
+# Definisi probabilitas: P(A) = jumlah hasil yang diinginkan / jumlah hasil yang mungkin
+
+# Contoh: probabilitas mendapatkan angka genap pada dadu 6 sisi
+p_even = 3/6  # angka genap: 2, 4, 6
+print(f"P(angka genap) = {p_even}")
+
+# Probabilitas total: P(A or B) = P(A) + P(B) - P(A and B)
+# Contoh: probabilitas mendapatkan angka genap ATAU lebih besar dari 4
+p_greater_than_4 = 2/6  # 5, 6
+p_even_and_greater = 1/6  # hanya 6
+p_even_or_greater = p_even + p_greater_than_4 - p_even_and_greater
+print(f"P(even OR > 4) = {p_even_or_greater}")
+
+# Probabilitas bersyarat: P(A|B) = P(A and B) / P(B)
+# Contoh: probabilitas mendapatkan angka 6 jika diketahui angka yang keluar genap
+p_6_given_even = (1/6) / (3/6)
+print(f"P(6|even) = {p_6_given_even}")
+```
+
+**Kombinasi dan Permutasi**
+
+```python
+import math
+
+# Permutasi: nPr = n! / (n-r)!
+def permutation(n, r):
+    return math.factorial(n) // math.factorial(n-r)
+
+# Kombinasi: nCr = n! / (r! * (n-r)!)
+def combination(n, r):
+    return math.factorial(n) // (math.factorial(r) * math.factorial(n-r))
+
+# Contoh: dari 10 orang, berapa cara memilih 3 orang untuk komite?
+ways_to_select_committee = combination(10, 3)
+print(f"Ways to select committee: {ways_to_select_committee}")
+
+# Contoh: dari 10 orang, berapa cara mengurutkan 3 orang untuk posisi ketua, wakil, dan sekretaris?
+ways_to_select_positions = permutation(10, 3)
+print(f"Ways to select positions: {ways_to_select_positions}")
+
+# Dengan library scipy
+from scipy.special import comb, perm
+print(f"Combination (scipy): {comb(10, 3, exact=True)}")
+print(f"Permutation (scipy): {perm(10, 3, exact=True)}")
+```
+
+**Simulasi Probabilitas**
+
+```python
+import numpy as np
+
+# Simulasi melempar dadu 1000 kali
+np.random.seed(42)  # untuk hasil yang reproducible
+rolls = np.random.randint(1, 7, size=1000)
+
+# Probabilitas empiris mendapatkan angka genap
+empirical_p_even = np.mean(rolls % 2 == 0)
+print(f"Empirical P(even): {empirical_p_even}")
+
+# Simulasi melempar koin adil 1000 kali
+coin_flips = np.random.choice(['H', 'T'], size=1000)
+heads_count = np.sum(coin_flips == 'H')
+empirical_p_heads = heads_count / 1000
+print(f"Empirical P(heads): {empirical_p_heads}")
+
+# Visualisasi hasil eksperimen
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+plt.hist(rolls, bins=np.arange(1, 8) - 0.5, edgecolor='black', rwidth=0.8)
+plt.title('Hasil 1000 Lemparan Dadu')
+plt.xlabel('Nilai Dadu')
+plt.ylabel('Frekuensi')
+plt.xticks(range(1, 7))
+
+plt.subplot(1, 2, 2)
+plt.bar(['Heads', 'Tails'], [np.sum(coin_flips == 'H'), np.sum(coin_flips == 'T')],
+        color=['skyblue', 'salmon'], edgecolor='black')
+plt.title('Hasil 1000 Lemparan Koin')
+plt.ylabel('Frekuensi')
+
+plt.tight_layout()
+plt.show()
+```
+
+**Hukum Bayes**
+
+```python
+# Teorema Bayes: P(A|B) = P(B|A) * P(A) / P(B)
+
+# Contoh kasus: Tes medis
+# Diketahui:
+# - 1% populasi menderita penyakit (prevalence)
+# - Sensitivitas tes: 95% (true positive rate)
+# - Spesifisitas tes: 90% (true negative rate)
+
+# Probabilitas prior
+p_disease = 0.01  # P(D)
+p_no_disease = 0.99  # P(~D)
+
+# Probabilitas bersyarat
+p_positive_if_disease = 0.95  # P(+|D)
+p_negative_if_disease = 0.05  # P(-|D)
+p_positive_if_no_disease = 0.10  # P(+|~D) = 1 - spesifisitas
+p_negative_if_no_disease = 0.90  # P(-|~D)
+
+# Probabilitas positif total
+p_positive = p_positive_if_disease * p_disease + p_positive_if_no_disease * p_no_disease
+
+# Probabilitas memiliki penyakit jika hasil tes positif (posterior)
+p_disease_if_positive = (p_positive_if_disease * p_disease) / p_positive
+
+print(f"P(penyakit | tes positif) = {p_disease_if_positive:.4f} = {p_disease_if_positive*100:.2f}%")
+
+# Kesimpulan: Meskipun tes positif, probabilitas benar-benar memiliki penyakit hanya sekitar 8.7%
+```
+
+#### Probability_Distributions
+
+Distribusi probabilitas menggambarkan pola kemungkinan hasil dari suatu eksperimen acak.
+
+**Distribusi Diskrit**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# 1. Distribusi Bernoulli (kejadian biner: sukses/gagal)
+p = 0.3  # probabilitas sukses
+bern = stats.bernoulli(p)
+
+# PMF (Probability Mass Function)
+x = np.array([0, 1])
+pmf = bern.pmf(x)
+
+plt.figure(figsize=(12, 8))
+plt.subplot(2, 2, 1)
+plt.bar(x, pmf, width=0.4)
+plt.title(f'Distribusi Bernoulli (p={p})')
+plt.xlabel('Nilai')
+plt.ylabel('Probabilitas')
+plt.xticks([0, 1], ['Gagal (0)', 'Sukses (1)'])
+
+# 2. Distribusi Binomial (jumlah sukses dalam n percobaan)
+n = 10  # jumlah percobaan
+p = 0.3  # probabilitas sukses
+binom = stats.binom(n, p)
+
+# PMF (Probability Mass Function)
+x = np.arange(0, n+1)
+pmf = binom.pmf(x)
+
+plt.subplot(2, 2, 2)
+plt.bar(x, pmf, width=0.4)
+plt.title(f'Distribusi Binomial (n={n}, p={p})')
+plt.xlabel('Jumlah Sukses')
+plt.ylabel('Probabilitas')
+
+# 3. Distribusi Poisson (jumlah kejadian dalam interval)
+mu = 3  # rata-rata jumlah kejadian
+poisson = stats.poisson(mu)
+
+# PMF (Probability Mass Function)
+x = np.arange(0, 12)
+pmf = poisson.pmf(x)
+
+plt.subplot(2, 2, 3)
+plt.bar(x, pmf, width=0.4)
+plt.title(f'Distribusi Poisson (λ={mu})')
+plt.xlabel('Jumlah Kejadian')
+plt.ylabel('Probabilitas')
+
+# 4. Distribusi Geometrik (percobaan pertama yang sukses)
+p = 0.3  # probabilitas sukses
+geom = stats.geom(p)
+
+# PMF (Probability Mass Function)
+x = np.arange(1, 12)
+pmf = geom.pmf(x)
+
+plt.subplot(2, 2, 4)
+plt.bar(x, pmf, width=0.4)
+plt.title(f'Distribusi Geometrik (p={p})')
+plt.xlabel('Jumlah Percobaan Hingga Sukses')
+plt.ylabel('Probabilitas')
+
+plt.tight_layout()
+plt.show()
+
+# Simulasi distribusi diskrit
+n_samples = 1000
+
+# Bernoulli
+bern_samples = bern.rvs(size=n_samples)
+print(f"Mean of Bernoulli samples: {np.mean(bern_samples):.4f} (Expected: {p})")
+
+# Binomial
+binom_samples = binom.rvs(size=n_samples)
+print(f"Mean of Binomial samples: {np.mean(binom_samples):.4f} (Expected: {n*p})")
+
+# Poisson
+poisson_samples = poisson.rvs(size=n_samples)
+print(f"Mean of Poisson samples: {np.mean(poisson_samples):.4f} (Expected: {mu})")
+```
+
+**Distribusi Kontinu**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# 1. Distribusi Normal (Gaussian)
+mu = 0      # mean
+sigma = 1   # standard deviation
+x = np.linspace(-4, 4, 1000)
+pdf_normal = stats.norm.pdf(x, mu, sigma)
+
+plt.figure(figsize=(14, 10))
+plt.subplot(2, 2, 1)
+plt.plot(x, pdf_normal)
+plt.title(f'Distribusi Normal (μ={mu}, σ={sigma})')
+plt.xlabel('x')
+plt.ylabel('Density')
+plt.grid(True, alpha=0.3)
+
+# Menunjukkan area di bawah kurva (CDF)
+for area in [0.68, 0.95, 0.997]:
+    z = stats.norm.ppf((1 + area) / 2)
+    x_fill = np.linspace(-z, z, 1000)
+    plt.fill_between(x_fill, stats.norm.pdf(x_fill, mu, sigma), alpha=0.2)
+    plt.axvline(z, color='red', linestyle='--', alpha=0.3)
+    plt.axvline(-z, color='red', linestyle='--', alpha=0.3)
+
+# 2. Distribusi Uniform
+a, b = 0, 1  # lower and upper bounds
+x = np.linspace(-0.5, 1.5, 1000)
+pdf_uniform = stats.uniform.pdf(x, a, b-a)
+
+plt.subplot(2, 2, 2)
+plt.plot(x, pdf_uniform)
+plt.title(f'Distribusi Uniform (a={a}, b={b})')
+plt.xlabel('x')
+plt.ylabel('Density')
+plt.grid(True, alpha=0.3)
+
+# 3. Distribusi Eksponensial
+lambda_exp = 0.5  # rate parameter
+x = np.linspace(0, 10, 1000)
+pdf_exp = stats.expon.pdf(x, scale=1/lambda_exp)
+
+plt.subplot(2, 2, 3)
+plt.plot(x, pdf_exp)
+plt.title(f'Distribusi Eksponensial (λ={lambda_exp})')
+plt.xlabel('x')
+plt.ylabel('Density')
+plt.grid(True, alpha=0.3)
+
+# 4. Distribusi t-Student
+df = 3  # degrees of freedom
+x = np.linspace(-4, 4, 1000)
+pdf_t = stats.t.pdf(x, df)
+pdf_normal = stats.norm.pdf(x, 0, 1)  # for comparison
+
+plt.subplot(2, 2, 4)
+plt.plot(x, pdf_t, label=f't-distribution (df={df})')
+plt.plot(x, pdf_normal, 'r--', label='Normal distribution')
+plt.title('Distribusi t vs Normal')
+plt.xlabel('x')
+plt.ylabel('Density')
+plt.legend()
+plt.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# Simulasi dan sampling
+n_samples = 10000
+
+# Normal
+normal_samples = stats.norm.rvs(mu, sigma, size=n_samples)
+print(f"Mean of Normal samples: {np.mean(normal_samples):.4f} (Expected: {mu})")
+print(f"Std of Normal samples: {np.std(normal_samples):.4f} (Expected: {sigma})")
+
+# Uniform
+uniform_samples = stats.uniform.rvs(a, b-a, size=n_samples)
+print(f"Mean of Uniform samples: {np.mean(uniform_samples):.4f} (Expected: {(a+b)/2})")
+
+# Eksponensial
+exp_samples = stats.expon.rvs(scale=1/lambda_exp, size=n_samples)
+print(f"Mean of Exponential samples: {np.mean(exp_samples):.4f} (Expected: {1/lambda_exp})")
+```
+
+**Central Limit Theorem**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# Demonstrasi Central Limit Theorem
+plt.figure(figsize=(15, 10))
+
+# Berbagai distribusi populasi
+distributions = [
+    ('Uniform', stats.uniform(0, 1)),
+    ('Exponential', stats.expon(scale=1)),
+    ('Beta(2,5)', stats.beta(2, 5)),
+    ('Gamma(2)', stats.gamma(2))
+]
+
+# Sample sizes
+sample_sizes = [1, 2, 5, 30]
+
+for i, (name, dist) in enumerate(distributions):
+    for j, n in enumerate(sample_sizes):
+        # Generate 10000 samples of size n
+        samples = np.array([dist.rvs(size=n).mean() for _ in range(10000)])
+
+        # Plot the histogram of sample means
+        plt.subplot(4, 4, i*4 + j + 1)
+        plt.hist(samples, bins=30, density=True, alpha=0.7)
+
+        # Calculate and overlay the theoretical normal distribution
+        if n > 1:  # Skip for n=1, since it's just the original distribution
+            mean = dist.mean()
+            std = dist.std() / np.sqrt(n)
+            x = np.linspace(min(samples), max(samples), 100)
+            plt.plot(x, stats.norm.pdf(x, mean, std), 'r-', linewidth=2)
+
+        plt.title(f'{name}, n={n}')
+        if i == 3:
+            plt.xlabel('Sample Mean')
+        if j == 0:
+            plt.ylabel('Density')
+
+plt.tight_layout()
+plt.suptitle('Central Limit Theorem Demonstration', y=1.02, fontsize=16)
+plt.show()
+
+# Kesimpulan Central Limit Theorem:
+# 1. Distribusi dari rata-rata sampel mendekati distribusi normal ketika ukuran sampel meningkat
+# 2. Hal ini berlaku terlepas dari bentuk distribusi populasi aslinya
+# 3. Standar deviasi distribusi sampling = standar deviasi populasi / sqrt(n)
+```
+
+#### Hypothesis_Testing_Basics
+
+Pengujian hipotesis adalah metode untuk membuat keputusan berdasarkan data.
+
+**Konsep Dasar**
+
+Pengujian hipotesis melibatkan:
+
+1. Hipotesis nol (H₀): Pernyataan "tidak ada efek" atau "tidak ada perbedaan"
+2. Hipotesis alternatif (H₁ atau Hₐ): Pernyataan yang berlawanan dengan H₀
+3. Statistik uji: Nilai yang dihitung dari data sampel
+4. p-value: Probabilitas mendapatkan hasil yang sama atau lebih ekstrem dari yang diamati, jika H₀ benar
+5. Tingkat signifikansi (α): Ambang batas untuk menolak H₀ (biasanya 0.05)
+
+**One-Sample t-Test**
+
+```python
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+
+# Contoh: Apakah rata-rata tinggi mahasiswa berbeda dari 170 cm?
+# H₀: μ = 170
+# H₁: μ ≠ 170
+
+# Data sampel
+heights = np.array([173, 175, 180, 178, 177, 165, 167, 172, 168, 170])
+
+# Menghitung statistik-t secara manual
+mean = np.mean(heights)
+std = np.std(heights, ddof=1)  # ddof=1 untuk sampel
+n = len(heights)
+se = std / np.sqrt(n)  # standard error
+t_stat = (mean - 170) / se
+df = n - 1  # degrees of freedom
+p_value = 2 * (1 - stats.t.cdf(abs(t_stat), df))  # two-tailed test
+
+print(f"Mean: {mean:.2f}")
+print(f"Standard Deviation: {std:.2f}")
+print(f"Standard Error: {se:.2f}")
+print(f"t-statistic: {t_stat:.4f}")
+print(f"p-value: {p_value:.4f}")
+
+# Atau menggunakan fungsi bawaan
+t_stat, p_value = stats.ttest_1samp(heights, 170)
+print(f"t-statistic (scipy): {t_stat:.4f}")
+print(f"p-value (scipy): {p_value:.4f}")
+
+# Visualisasi
+plt.figure(figsize=(10, 6))
+plt.hist(heights, bins=6, alpha=0.7, color='skyblue', edgecolor='black')
+plt.axvline(170, color='red', linestyle='--', label='H₀: μ = 170')
+plt.axvline(mean, color='green', linestyle='-', label=f'Sample mean: {mean:.2f}')
+plt.title('Histogram of Heights with Null Hypothesis')
+plt.xlabel('Height (cm)')
+plt.ylabel('Frequency')
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()
+
+# Kesimpulan
+alpha = 0.05
+if p_value < alpha:
+    print(f"Karena p-value ({p_value:.4f}) < alpha ({alpha}), kita menolak H₀.")
+    print("Ada cukup bukti untuk menyimpulkan bahwa rata-rata tinggi mahasiswa berbeda dari 170 cm.")
+else:
+    print(f"Karena p-value ({p_value:.4f}) ≥ alpha ({alpha}), kita tidak menolak H₀.")
+    print("Tidak ada cukup bukti untuk menyimpulkan bahwa rata-rata tinggi mahasiswa berbeda dari 170 cm.")
+```
+
+**Two-Sample t-Test**
+
+```python
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+
+# Contoh: Apakah ada perbedaan rata-rata antara dua kelompok?
+# H₀: μ₁ = μ₂
+# H₁: μ₁ ≠ μ₂
+
+# Data sampel
+group1 = np.array([85, 90, 88, 92, 95, 87, 89, 91])
+group2 = np.array([79, 78, 85, 80, 81, 86, 83, 84, 82, 81])
+
+# Descriptive statistics
+mean1, mean2 = np.mean(group1), np.mean(group2)
+std1, std2 = np.std(group1, ddof=1), np.std(group2, ddof=1)
+n1, n2 = len(group1), len(group2)
+
+print(f"Group 1: Mean = {mean1:.2f}, Std = {std1:.2f}, n = {n1}")
+print(f"Group 2: Mean = {mean2:.2f}, Std = {std2:.2f}, n = {n2}")
+
+# Menggunakan fungsi t-test dari scipy
+t_stat, p_value = stats.ttest_ind(group1, group2, equal_var=False)  # Welch's t-test (unequal variances)
+print(f"t-statistic: {t_stat:.4f}")
+print(f"p-value: {p_value:.4f}")
+
+# Visualisasi
+plt.figure(figsize=(10, 6))
+plt.boxplot([group1, group2], labels=['Group 1', 'Group 2'])
+plt.title('Box Plot Comparison')
+plt.ylabel('Values')
+plt.grid(alpha=0.3)
+plt.show()
+
+# Kesimpulan
+alpha = 0.05
+if p_value < alpha:
+    print(f"Karena p-value ({p_value:.4f}) < alpha ({alpha}), kita menolak H₀.")
+    print("Ada cukup bukti untuk menyimpulkan bahwa ada perbedaan rata-rata antara kedua kelompok.")
+else:
+    print(f"Karena p-value ({p_value:.4f}) ≥ alpha ({alpha}), kita tidak menolak H₀.")
+    print("Tidak ada cukup bukti untuk menyimpulkan bahwa ada perbedaan rata-rata antara kedua kelompok.")
+```
+
+**Chi-Square Test for Independence**
+
+```python
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+# Contoh: Apakah ada hubungan antara jenis kelamin dan pemilihan program studi?
+# H₀: Tidak ada hubungan (independen)
+# H₁: Ada hubungan (dependen)
+
+# Data: Tabel kontingensi
+observed = np.array([
+    [30, 15, 25],  # Laki-laki (Teknik, Bisnis, Sains)
+    [20, 25, 15]   # Perempuan (Teknik, Bisnis, Sains)
+])
+
+# Chi-square test
+chi2_stat, p_value, dof, expected = stats.chi2_contingency(observed)
+
+print(f"Chi-square statistic: {chi2_stat:.4f}")
+print(f"p-value: {p_value:.4f}")
+print(f"Degrees of freedom: {dof}")
+print("Expected frequencies:")
+print(expected)
+
+# Visualisasi
+plt.figure(figsize=(14, 6))
+
+# Plot observed frequencies
+plt.subplot(1, 2, 1)
+df_observed = pd.DataFrame(observed,
+                          index=['Laki-laki', 'Perempuan'],
+                          columns=['Teknik', 'Bisnis', 'Sains'])
+sns.heatmap(df_observed, annot=True, fmt="d", cmap="YlGnBu", cbar=False)
+plt.title('Observed Frequencies')
+
+# Plot expected frequencies
+plt.subplot(1, 2, 2)
+df_expected = pd.DataFrame(expected,
+                          index=['Laki-laki', 'Perempuan'],
+                          columns=['Teknik', 'Bisnis', 'Sains'])
+sns.heatmap(df_expected, annot=True, fmt=".1f", cmap="YlGnBu", cbar=False)
+plt.title('Expected Frequencies (if independent)')
+
+plt.tight_layout()
+plt.show()
+
+# Kesimpulan
+alpha = 0.05
+if p_value < alpha:
+    print(f"Karena p-value ({p_value:.4f}) < alpha ({alpha}), kita menolak H₀.")
+    print("Ada cukup bukti untuk menyimpulkan bahwa ada hubungan antara jenis kelamin dan pemilihan program studi.")
+else:
+    print(f"Karena p-value ({p_value:.4f}) ≥ alpha ({alpha}), kita tidak menolak H₀.")
+    print("Tidak ada cukup bukti untuk menyimpulkan bahwa ada hubungan antara jenis kelamin dan pemilihan program studi.")
+```
+
+**ANOVA (Analysis of Variance)**
+
+```python
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+# Contoh: Apakah ada perbedaan rata-rata antara lebih dari dua kelompok?
+# H₀: μ₁ = μ₂ = μ₃
+# H₁: Setidaknya satu rata-rata kelompok berbeda
+
+# Data sampel
+group1 = np.array([85, 90, 88, 92, 95, 87, 89, 91])
+group2 = np.array([79, 78, 85, 80, 81, 86, 83, 84, 82, 81])
+group3 = np.array([75, 80, 82, 88, 84, 83, 80, 79, 81])
+
+# Melakukan ANOVA dengan scipy
+f_stat, p_value = stats.f_oneway(group1, group2, group3)
+print(f"F-statistic: {f_stat:.4f}")
+print(f"p-value: {p_value:.4f}")
+
+# Visualisasi
+plt.figure(figsize=(10, 6))
+data = [group1, group2, group3]
+plt.boxplot(data, labels=['Group 1', 'Group 2', 'Group 3'])
+plt.title('Box Plot Comparison for ANOVA')
+plt.ylabel('Values')
+plt.grid(alpha=0.3)
+plt.show()
+
+# Jika p-value signifikan, lakukan post-hoc test (Tukey's HSD)
+if p_value < 0.05:
+    # Membuat dataframe untuk analisis post-hoc
+    df = pd.DataFrame({
+        'values': np.concatenate([group1, group2, group3]),
+        'group': np.concatenate([
+            np.repeat('Group 1', len(group1)),
+            np.repeat('Group 2', len(group2)),
+            np.repeat('Group 3', len(group3))
+        ])
+    })
+
+    # Menggunakan statsmodels untuk post-hoc test
+    from statsmodels.stats.multicomp import pairwise_tukeyhsd
+    tukey = pairwise_tukeyhsd(endog=df['values'], groups=df['group'], alpha=0.05)
+    print(tukey)
+
+    # Visualisasi mean dan confidence intervals
+    plt.figure(figsize=(10, 6))
+    sns.pointplot(x='group', y='values', data=df, join=False, ci=95)
+    plt.title('Mean Values with 95% Confidence Intervals')
+    plt.grid(alpha=0.3)
+    plt.show()
+
+# Kesimpulan
+alpha = 0.05
+if p_value < alpha:
+    print(f"Karena p-value ({p_value:.4f}) < alpha ({alpha}), kita menolak H₀.")
+    print("Ada cukup bukti untuk menyimpulkan bahwa setidaknya satu rata-rata kelompok berbeda.")
+else:
+    print(f"Karena p-value ({p_value:.4f}) ≥ alpha ({alpha}), kita tidak menolak H₀.")
+    print("Tidak ada cukup bukti untuk menyimpulkan bahwa ada perbedaan rata-rata antar kelompok.")
+```
+
+#### Linear_Algebra_Basics
+
+Linear algebra adalah fondasi matematika yang penting untuk machine learning dan data science.
+
+**Vektor dan Matriks**
+
+```python
+import numpy as np
+
+# Vektor
+v = np.array([1, 2, 3])
+print("Vektor v:")
+print(v)
+print(f"Dimensi: {v.shape}")
+
+# Matriks
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+print("\nMatriks A:")
+print(A)
+print(f"Dimensi: {A.shape}")  # (rows, columns)
+
+# Identitas
+I = np.eye(3)  # 3x3 identity matrix
+print("\nMatriks Identitas 3x3:")
+print(I)
+
+# Matriks Nol
+zeros = np.zeros((2, 3))
+print("\nMatriks Nol 2x3:")
+print(zeros)
+
+# Matriks Satu
+ones = np.ones((2, 2))
+print("\nMatriks Satu 2x2:")
+print(ones)
+
+# Transpose
+A_T = A.T
+print("\nTranspose dari A:")
+print(A_T)
+```
+
+**Operasi Vektor dan Matriks**
+
+```python
+import numpy as np
+
+# Vektor
+v1 = np.array([1, 2, 3])
+v2 = np.array([4, 5, 6])
+
+# Penjumlahan dan pengurangan vektor
+v_sum = v1 + v2
+v_diff = v1 - v2
+print("v1 + v2 =", v_sum)
+print("v1 - v2 =", v_diff)
+
+# Dot product (perkalian titik)
+dot_product = np.dot(v1, v2)  # sama dengan v1 @ v2 atau v1.dot(v2)
+print("v1 · v2 =", dot_product)
+
+# Norm (panjang) vektor
+v1_norm = np.linalg.norm(v1)
+print("||v1|| =", v1_norm)
+
+# Matriks
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+
+# Penjumlahan dan pengurangan matriks
+C = A + B
+D = A - B
+print("\nA + B =")
+print(C)
+print("\nA - B =")
+print(D)
+
+# Perkalian matriks
+E = A @ B  # sama dengan np.matmul(A, B) atau A.dot(B)
+print("\nA × B =")
+print(E)
+
+# Perkalian elemen-wise
+F = A * B
+print("\nA * B (element-wise) =")
+print(F)
+
+# Determinan
+det_A = np.linalg.det(A)
+print("\ndet(A) =", det_A)
+
+# Inverse
+inv_A = np.linalg.inv(A)
+print("\nA^(-1) =")
+print(inv_A)
+
+# Verifikasi inverse
+print("\nA × A^(-1) =")
+print(A @ inv_A)  # Harusnya mendekati matriks identitas
+```
+
+**Eigenvalues dan Eigenvectors**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Matriks untuk dihitung eigenvalues dan eigenvectors
+A = np.array([[4, 2],
+              [1, 3]])
+
+# Menghitung eigenvalues dan eigenvectors
+eigenvalues, eigenvectors = np.linalg.eig(A)
+
+print("Matriks A:")
+print(A)
+print("\nEigenvalues:")
+print(eigenvalues)
+print("\nEigenvectors (kolom):")
+print(eigenvectors)
+
+# Verifikasi Ax = λx untuk setiap eigenvector
+for i in range(len(eigenvalues)):
+    lambda_i = eigenvalues[i]
+    x_i = eigenvectors[:, i]
+    Ax_i = A @ x_i
+    lambda_x_i = lambda_i * x_i
+
+    print(f"\nUntuk eigenvalue λ_{i+1} = {lambda_i}:")
+    print(f"Eigenvector x_{i+1} = {x_i}")
+    print(f"A·x_{i+1} = {Ax_i}")
+    print(f"λ_{i+1}·x_{i+1} = {lambda_x_i}")
+    print(f"Selisih: {np.linalg.norm(Ax_i - lambda_x_i)}")
+
+# Visualisasi transformasi linear
+# Membuat grid dari titik-titik
+x = np.linspace(-1, 1, 10)
+y = np.linspace(-1, 1, 10)
+X, Y = np.meshgrid(x, y)
+points = np.vstack([X.flatten(), Y.flatten()])
+
+# Transformasi titik-titik dengan matriks A
+transformed_points = A @ points
+
+# Plot
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+plt.scatter(points[0], points[1], color='blue', alpha=0.5, label='Original')
+plt.grid(True)
+plt.title('Original Points')
+plt.xlim(-4, 4)
+plt.ylim(-4, 4)
+plt.axhline(y=0, color='k', linestyle='-', alpha=0.3)
+plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+
+plt.subplot(1, 2, 2)
+plt.scatter(transformed_points[0], transformed_points[1], color='red', alpha=0.5, label='Transformed')
+plt.grid(True)
+plt.title('Transformed Points (Ax)')
+plt.xlim(-4, 4)
+plt.ylim(-4, 4)
+plt.axhline(y=0, color='k', linestyle='-', alpha=0.3)
+plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+
+# Plot eigenvectors
+for i in range(len(eigenvalues)):
+    vec = eigenvectors[:, i]
+    plt.subplot(1, 2, 1)
+    plt.arrow(0, 0, vec[0], vec[1], head_width=0.1, head_length=0.1,
+              fc='green', ec='green', label=f'Eigenvector {i+1}')
+
+    plt.subplot(1, 2, 2)
+    transformed_vec = A @ vec
+    plt.arrow(0, 0, transformed_vec[0], transformed_vec[1], head_width=0.1, head_length=0.1,
+              fc='green', ec='green')
+    plt.arrow(0, 0, eigenvalues[i]*vec[0], eigenvalues[i]*vec[1], head_width=0.1, head_length=0.1,
+              fc='purple', ec='purple', linestyle='--')
+
+plt.tight_layout()
+plt.show()
+```
+
+**Singular Value Decomposition (SVD)**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+
+# Singular Value Decomposition
+# A = U · Σ · V^T
+# di mana:
+# - U adalah matriks ortogonal kiri
+# - Σ adalah matriks diagonal dengan nilai singular
+# - V^T adalah matriks ortogonal kanan yang ditranspose
+
+# Contoh matriks
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+# Melakukan SVD
+U, s, Vt = np.linalg.svd(A, full_matrices=False)
+
+print("Matriks A:")
+print(A)
+print("\nU (matriks orthogonal kiri):")
+print(U)
+print("\nΣ (nilai singular):")
+print(np.diag(s))
+print("\nV^T (matriks orthogonal kanan, ditranspose):")
+print(Vt)
+
+# Rekonstruksi
+A_reconstructed = U @ np.diag(s) @ Vt
+print("\nA rekonstruksi:")
+print(A_reconstructed)
+print("\nSelisih A dan rekonstruksi:")
+print(np.linalg.norm(A - A_reconstructed))
+
+# Aplikasi SVD: Kompresi gambar
+# Load digit data
+digits = load_digits()
+X = digits.data.reshape(1797, 8, 8)
+
+# Pilih satu gambar
+img = X[0]
+
+# SVD pada gambar
+U, s, Vt = np.linalg.svd(img)
+
+# Plot gambar asli
+plt.figure(figsize=(15, 8))
+plt.subplot(2, 4, 1)
+plt.imshow(img, cmap='gray')
+plt.title('Original Image')
+plt.axis('off')
+
+# Rekonstruksi dengan jumlah nilai singular yang berbeda
+for i, k in enumerate([1, 2, 3, 5, 7]):
+    # Rekonstruksi dengan k komponen
+    img_approx = U[:, :k] @ np.diag(s[:k]) @ Vt[:k, :]
+
+    plt.subplot(2, 4, i + 2)
+    plt.imshow(img_approx, cmap='gray')
+    plt.title(f'k = {k}')
+    plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# Plot nilai singular
+plt.figure(figsize=(10, 6))
+plt.plot(s, 'o-')
+plt.title('Singular Values')
+plt.xlabel('Index')
+plt.ylabel('Value')
+plt.grid(True)
+plt.show()
+```
+
+# Fundamental Data Science
+
+## Calculus Basics
+
+Kalkulus adalah cabang matematika yang mempelajari perubahan, seperti kemiringan kurva atau laju perubahan suatu kuantitas. Dalam data science, kalkulus sangat penting untuk memahami dan mengoptimalkan algoritma machine learning.
+
+### 1. Turunan (Derivatives)
+
+Turunan mengukur laju perubahan suatu fungsi terhadap variabelnya. Ini adalah konsep dasar dalam gradient descent, algoritma optimasi yang digunakan di hampir semua model machine learning.
+
+**Rumus Dasar:**
+
+-   Turunan dari f(x) ditulis sebagai f'(x) atau df/dx
+-   Untuk fungsi f(x) = x², turunannya adalah f'(x) = 2x
+
+**Contoh Kode Python:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.misc import derivative
+
+# Mendefinisikan fungsi
+def f(x):
+    return x**2
+
+# Mendefinisikan turunan secara manual
+def df(x):
+    return 2*x
+
+# Membuat data untuk plot
+x = np.linspace(-5, 5, 100)
+y = f(x)
+dy = df(x)
+
+# Visualisasi
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', label='f(x) = x²')
+plt.plot(x, dy, 'r-', label='f\'(x) = 2x')
+plt.axhline(y=0, color='k', linestyle='-', alpha=0.3)
+plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.title('Fungsi dan Turunannya')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+```
+
+### 2. Integral (Integrals)
+
+Integral adalah kebalikan dari turunan, yang mengukur area di bawah kurva. Dalam data science, integral digunakan dalam probabilitas dan statistik.
+
+**Rumus Dasar:**
+
+-   Integral dari f(x) ditulis sebagai ∫f(x)dx
+-   Untuk f(x) = x², integral tak tentu adalah ∫x²dx = (1/3)x³ + C
+
+**Contoh Kode Python:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import integrate
+
+# Mendefinisikan fungsi
+def f(x):
+    return x**2
+
+# Area di bawah kurva dari 0 sampai 2
+area, error = integrate.quad(f, 0, 2)
+print(f"Area di bawah kurva x² dari 0 sampai 2: {area}")  # Seharusnya 8/3
+
+# Visualisasi
+x = np.linspace(0, 2, 100)
+y = f(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', label='f(x) = x²')
+plt.fill_between(x, y, alpha=0.3)
+plt.axhline(y=0, color='k', linestyle='-', alpha=0.3)
+plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.title(f'Integral dari x² (0 sampai 2) = {area:.4f}')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+```
+
+### 3. Partial Derivatives
+
+Dalam machine learning, kebanyakan model melibatkan banyak variabel, sehingga turunan parsial sangat penting untuk algoritma optimasi.
+
+**Contoh Fungsi Biaya (Cost Function) Linear Regression:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Membuat data
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
+
+# Fungsi biaya untuk linear regression
+def cost_function(theta0, theta1, X, y):
+    m = len(y)
+    predictions = theta0 + theta1 * X
+    cost = (1/(2*m)) * np.sum(np.square(predictions - y))
+    return cost
+
+# Membuat grid untuk visualisasi
+theta0_vals = np.linspace(0, 10, 100)
+theta1_vals = np.linspace(0, 5, 100)
+theta0_grid, theta1_grid = np.meshgrid(theta0_vals, theta1_vals)
+cost_grid = np.zeros(theta0_grid.shape)
+
+# Menghitung biaya untuk setiap kombinasi parameter
+for i in range(len(theta0_vals)):
+    for j in range(len(theta1_vals)):
+        cost_grid[j, i] = cost_function(theta0_vals[i], theta1_vals[j], X, y)
+
+# Visualisasi
+fig = plt.figure(figsize=(12, 6))
+
+# Plot permukaan biaya
+ax1 = fig.add_subplot(121, projection='3d')
+surf = ax1.plot_surface(theta0_grid, theta1_grid, cost_grid, cmap='viridis', alpha=0.8)
+ax1.set_xlabel('theta0')
+ax1.set_ylabel('theta1')
+ax1.set_zlabel('Cost')
+ax1.set_title('Permukaan Fungsi Biaya')
+
+# Plot kontur biaya
+ax2 = fig.add_subplot(122)
+contour = ax2.contour(theta0_grid, theta1_grid, cost_grid, 20, cmap='viridis')
+ax2.set_xlabel('theta0')
+ax2.set_ylabel('theta1')
+ax2.set_title('Kontur Fungsi Biaya')
+plt.colorbar(contour, ax=ax2)
+
+plt.tight_layout()
+plt.show()
+```
+
+### 4. Gradient Descent
+
+Gradient descent adalah algoritma optimasi yang menggunakan turunan untuk menemukan nilai minimum dari fungsi. Ini sangat penting dalam machine learning untuk menemukan parameter optimal.
+
+**Contoh Kode untuk Linear Regression:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Data sederhana
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
+
+# Menambahkan kolom untuk bias (intercept)
+X_b = np.c_[np.ones((100, 1)), X]
+
+# Gradient Descent untuk Linear Regression
+def gradient_descent(X, y, theta, learning_rate, n_iterations):
+    m = len(y)
+    cost_history = np.zeros(n_iterations)
+    theta_history = np.zeros((n_iterations, 2))
+
+    for it in range(n_iterations):
+        gradients = 2/m * X_b.T.dot(X_b.dot(theta) - y)
+        theta = theta - learning_rate * gradients
+        theta_history[it,:] = theta.T
+        predictions = X_b.dot(theta)
+        cost_history[it] = (1/m) * np.sum(np.square(predictions - y))
+
+    return theta, cost_history, theta_history
+
+# Parameter awal
+theta = np.random.randn(2,1)
+
+# Jalankan gradient descent
+learning_rate = 0.1
+n_iterations = 100
+theta_final, cost_history, theta_history = gradient_descent(X_b, y, theta, learning_rate, n_iterations)
+
+print(f"Parameter akhir: theta0 = {theta_final[0][0]:.4f}, theta1 = {theta_final[1][0]:.4f}")
+
+# Visualisasi hasil
+plt.figure(figsize=(16, 6))
+
+# Plot data dan garis hasil regresi
+plt.subplot(1, 2, 1)
+plt.scatter(X, y)
+X_new = np.array([[0], [2]])
+X_new_b = np.c_[np.ones((2, 1)), X_new]
+y_predict = X_new_b.dot(theta_final)
+plt.plot(X_new, y_predict, "r-", linewidth=2, label="Prediksi")
+plt.xlabel("X")
+plt.ylabel("y")
+plt.title("Linear Regression dengan Gradient Descent")
+plt.legend()
+
+# Plot cost history
+plt.subplot(1, 2, 2)
+plt.plot(range(n_iterations), cost_history)
+plt.xlabel("Iterasi")
+plt.ylabel("Cost")
+plt.title("Evolusi Fungsi Biaya")
+
+plt.tight_layout()
+plt.show()
+```
+
+## Mathematics and Statistics
+
+### 1. Descriptive Statistics
+
+Statistik deskriptif adalah metode untuk mengorganisir, merangkum, dan menyajikan data dengan cara yang informatif.
+
+**Ukuran Tendensi Sentral:**
+
+-   Mean (rata-rata): ukuran pusat data
+-   Median: nilai tengah dalam dataset terurut
+-   Mode: nilai yang paling sering muncul
+
+**Ukuran Dispersi:**
+
+-   Range: selisih nilai maksimum dan minimum
+-   Varians: rata-rata deviasi kuadrat dari mean
+-   Standar deviasi: akar kuadrat dari varians
+
+**Contoh Kode:**
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Membuat dataset contoh
+np.random.seed(42)
+data = np.random.normal(loc=70, scale=10, size=1000)
+
+# Menghitung statistik deskriptif
+mean_val = np.mean(data)
+median_val = np.median(data)
+std_val = np.std(data)
+min_val = np.min(data)
+max_val = np.max(data)
+q1, q3 = np.percentile(data, [25, 75])
+iqr = q3 - q1
+
+# Membuat DataFrame untuk statistik deskriptif
+stats_df = pd.DataFrame({
+    'Statistik': ['Mean', 'Median', 'Standar Deviasi', 'Minimum', 'Maximum', 'Q1', 'Q3', 'IQR'],
+    'Nilai': [mean_val, median_val, std_val, min_val, max_val, q1, q3, iqr]
+})
+
+print(stats_df)
+
+# Visualisasi
+plt.figure(figsize=(12, 6))
+
+# Histogram dengan density plot
+plt.subplot(1, 2, 1)
+sns.histplot(data, kde=True)
+plt.axvline(mean_val, color='r', linestyle='--', label=f'Mean: {mean_val:.2f}')
+plt.axvline(median_val, color='g', linestyle='-.', label=f'Median: {median_val:.2f}')
+plt.title('Distribusi Data')
+plt.legend()
+
+# Box plot
+plt.subplot(1, 2, 2)
+sns.boxplot(x=data)
+plt.title('Box Plot')
+plt.xlabel('Nilai')
+
+plt.tight_layout()
+plt.show()
+```
+
+### 2. Probability Basics
+
+Probabilitas adalah ukuran kemungkinan suatu peristiwa terjadi. Ini adalah dasar untuk memahami statistik inferensial dan banyak algoritma machine learning.
+
+**Konsep Dasar:**
+
+-   Probabilitas berkisar antara 0 (tidak mungkin) hingga 1 (pasti)
+-   P(A ∪ B) = P(A) + P(B) - P(A ∩ B) (Hukum Penjumlahan)
+-   P(A ∩ B) = P(A) × P(B|A) (Hukum Perkalian)
+-   P(A|B) = P(A ∩ B) / P(B) (Probabilitas Bersyarat)
+
+**Contoh Kode untuk Simulasi Probabilitas:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Simulasi pelemparan dadu
+np.random.seed(42)
+n_trials = 10000
+dice_results = np.random.randint(1, 7, n_trials)
+
+# Menghitung probabilitas empiris
+probabilities = np.bincount(dice_results)[1:] / n_trials
+
+# Visualisasi
+plt.figure(figsize=(10, 6))
+sns.barplot(x=np.arange(1, 7), y=probabilities)
+plt.axhline(y=1/6, color='r', linestyle='--', label='Probabilitas Teoretis (1/6)')
+plt.xlabel('Hasil Dadu')
+plt.ylabel('Probabilitas')
+plt.title(f'Probabilitas Empiris dari {n_trials} Pelemparan Dadu')
+plt.legend()
+plt.ylim(0, 0.25)
+plt.show()
+
+# Demonstrasi hukum probabilitas bersyarat dengan kartu
+suits = ['Hati', 'Wajik', 'Sekop', 'Keriting']
+ranks = list(range(2, 11)) + ['J', 'Q', 'K', 'A']
+cards = [(s, r) for s in suits for r in ranks]
+
+# Fungsi untuk menghitung probabilitas
+def probability_experiment():
+    # Simulasi pengambilan kartu
+    n_simulations = 100000
+
+    # Menghitung P(A): Probabilitas mendapatkan kartu hati
+    count_hearts = 0
+
+    # Menghitung P(B): Probabilitas mendapatkan kartu As
+    count_aces = 0
+
+    # Menghitung P(A ∩ B): Probabilitas mendapatkan As hati
+    count_heart_ace = 0
+
+    for _ in range(n_simulations):
+        card = cards[np.random.randint(0, len(cards))]
+        if card[0] == 'Hati':
+            count_hearts += 1
+        if card[1] == 'A':
+            count_aces += 1
+        if card[0] == 'Hati' and card[1] == 'A':
+            count_heart_ace += 1
+
+    p_hearts = count_hearts / n_simulations
+    p_aces = count_aces / n_simulations
+    p_heart_ace = count_heart_ace / n_simulations
+
+    # Menghitung P(A|B): Probabilitas kartu hati diberikan bahwa kartu adalah As
+    p_heart_given_ace = p_heart_ace / p_aces if p_aces > 0 else 0
+
+    # Hasil teoretis
+    p_hearts_theory = 13/52  # 13 kartu hati dari 52 kartu
+    p_aces_theory = 4/52     # 4 As dari 52 kartu
+    p_heart_ace_theory = 1/52  # 1 As hati dari 52 kartu
+    p_heart_given_ace_theory = 1/4  # 1 hati dari 4 As
+
+    results = pd.DataFrame({
+        'Probabilitas': ['P(Hati)', 'P(As)', 'P(Hati ∩ As)', 'P(Hati | As)'],
+        'Empiris': [p_hearts, p_aces, p_heart_ace, p_heart_given_ace],
+        'Teoretis': [p_hearts_theory, p_aces_theory, p_heart_ace_theory, p_heart_given_ace_theory]
+    })
+
+    return results
+
+prob_results = probability_experiment()
+print("\nHasil Eksperimen Probabilitas Kartu:")
+print(prob_results)
+```
+
+### 3. Probability Distributions
+
+Distribusi probabilitas adalah model yang menghubungkan nilai variabel acak dengan probabilitasnya. Beberapa distribusi penting dalam data science termasuk:
+
+**Distribusi Diskrit:**
+
+-   Distribusi Binomial: menggambarkan jumlah sukses dalam n percobaan
+-   Distribusi Poisson: menggambarkan jumlah kejadian dalam interval tetap
+
+**Distribusi Kontinu:**
+
+-   Distribusi Normal: pola berbentuk lonceng yang banyak ditemui di alam
+-   Distribusi Eksponensial: menggambarkan waktu antar kejadian
+
+**Contoh Kode:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+
+plt.figure(figsize=(18, 12))
+
+# 1. Distribusi Binomial
+n_trials = 20
+p_success = 0.3
+x = np.arange(0, n_trials + 1)
+binomial = stats.binom.pmf(x, n_trials, p_success)
+
+plt.subplot(2, 2, 1)
+plt.bar(x, binomial)
+plt.title(f'Distribusi Binomial (n={n_trials}, p={p_success})')
+plt.xlabel('Jumlah Sukses')
+plt.ylabel('Probabilitas')
+
+# 2. Distribusi Poisson
+lambda_val = 3
+x = np.arange(0, 15)
+poisson = stats.poisson.pmf(x, lambda_val)
+
+plt.subplot(2, 2, 2)
+plt.bar(x, poisson)
+plt.title(f'Distribusi Poisson (λ={lambda_val})')
+plt.xlabel('Jumlah Kejadian')
+plt.ylabel('Probabilitas')
+
+# 3. Distribusi Normal
+x = np.linspace(-5, 5, 1000)
+norm_pdf = stats.norm.pdf(x, loc=0, scale=1)
+
+plt.subplot(2, 2, 3)
+plt.plot(x, norm_pdf)
+plt.fill_between(x, norm_pdf, alpha=0.3)
+plt.title('Distribusi Normal Standar (μ=0, σ=1)')
+plt.xlabel('Nilai')
+plt.ylabel('Densitas Probabilitas')
+
+# 4. Distribusi Eksponensial
+lambda_val = 0.5
+x = np.linspace(0, 10, 1000)
+exp_pdf = stats.expon.pdf(x, scale=1/lambda_val)
+
+plt.subplot(2, 2, 4)
+plt.plot(x, exp_pdf)
+plt.fill_between(x, exp_pdf, alpha=0.3)
+plt.title(f'Distribusi Eksponensial (λ={lambda_val})')
+plt.xlabel('Nilai')
+plt.ylabel('Densitas Probabilitas')
+
+plt.tight_layout()
+plt.show()
+
+# Demonstrasi Teorema Limit Pusat
+plt.figure(figsize=(15, 10))
+
+for i, sample_size in enumerate([1, 2, 5, 30]):
+    # Mengambil sampel dari distribusi seragam dan menghitung rata-ratanya
+    np.random.seed(42)
+    samples = np.random.uniform(0, 1, size=(10000, sample_size))
+    sample_means = samples.mean(axis=1)
+
+    plt.subplot(2, 2, i+1)
+    sns.histplot(sample_means, kde=True, stat="density")
+    plt.title(f'Rata-rata {sample_size} sampel dari Distribusi Seragam')
+    plt.xlabel('Rata-rata Sampel')
+    plt.ylabel('Densitas')
+
+    # Overlay distribusi normal dengan parameter yang sama
+    x = np.linspace(min(sample_means), max(sample_means), 1000)
+    plt.plot(x, stats.norm.pdf(x, np.mean(sample_means), np.std(sample_means)),
+             'r-', linewidth=2, label='Normal PDF')
+    if i == 3:
+        plt.legend()
+
+plt.suptitle('Demonstrasi Teorema Limit Pusat', fontsize=16)
+plt.tight_layout()
+plt.subplots_adjust(top=0.92)
+plt.show()
+```
+
+### 4. Hypothesis Testing Basics
+
+Pengujian hipotesis adalah metode statistik untuk membuat keputusan berdasarkan data. Ini melibatkan perbandingan hipotesis nol (biasanya tidak ada efek) dengan hipotesis alternatif.
+
+**Langkah-langkah:**
+
+1. Tentukan hipotesis nol (H₀) dan alternatif (H₁)
+2. Pilih tingkat signifikansi (α)
+3. Hitung statistik uji
+4. Tentukan p-value
+5. Bandingkan p-value dengan α dan buat keputusan
+
+**Contoh Kode untuk Uji t:**
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+
+# Membuat dua sampel data
+np.random.seed(42)
+sample1 = np.random.normal(loc=50, scale=5, size=100)  # Kelompok kontrol
+sample2 = np.random.normal(loc=52, scale=5, size=100)  # Kelompok treatment
+
+# Melakukan uji t independen
+t_stat, p_value = stats.ttest_ind(sample1, sample2, equal_var=True)
+
+print(f"Statistik t: {t_stat:.4f}")
+print(f"P-value: {p_value:.4f}")
+
+# Interpretasi
+alpha = 0.05
+if p_value < alpha:
+    print(f"Menolak hipotesis nol (p={p_value:.4f} < {alpha})")
+    print("Ada perbedaan signifikan antara kedua kelompok")
+else:
+    print(f"Gagal menolak hipotesis nol (p={p_value:.4f} >= {alpha})")
+    print("Tidak ada cukup bukti untuk menyatakan perbedaan signifikan")
+
+# Visualisasi
+plt.figure(figsize=(12, 6))
+
+# Histograms
+plt.subplot(1, 2, 1)
+sns.histplot(sample1, kde=True, color='blue', alpha=0.5, label='Kelompok 1')
+sns.histplot(sample2, kde=True, color='red', alpha=0.5, label='Kelompok 2')
+plt.axvline(np.mean(sample1), color='blue', linestyle='--', label=f'Mean 1: {np.mean(sample1):.2f}')
+plt.axvline(np.mean(sample2), color='red', linestyle='--', label=f'Mean 2: {np.mean(sample2):.2f}')
+plt.title('Distribusi Data Kedua Kelompok')
+plt.legend()
+
+# Box plot
+plt.subplot(1, 2, 2)
+data = pd.DataFrame({
+    'Kelompok': ['Kelompok 1']*len(sample1) + ['Kelompok 2']*len(sample2),
+    'Nilai': np.concatenate([sample1, sample2])
+})
+sns.boxplot(x='Kelompok', y='Nilai', data=data)
+plt.title(f'Box Plot Perbandingan (p-value: {p_value:.4f})')
+
+plt.tight_layout()
+plt.show()
+
+# Mendemonstrasikan interval kepercayaan
+from scipy import stats
+
+# Menghitung interval kepercayaan 95% untuk perbedaan rata-rata
+conf_interval = stats.t.interval(
+    alpha=0.95,  # 95% confidence interval
+    df=len(sample1) + len(sample2) - 2,  # degrees of freedom
+    loc=np.mean(sample2) - np.mean(sample1),  # point estimate (difference in means)
+    scale=np.sqrt(((len(sample1)-1) * np.var(sample1, ddof=1) +
+                  (len(sample2)-1) * np.var(sample2, ddof=1)) /
+                  (len(sample1) + len(sample2) - 2) *
+                  (1/len(sample1) + 1/len(sample2)))  # standard error
+)
+
+print(f"\nInterval Kepercayaan 95% untuk perbedaan rata-rata: {conf_interval}")
+
+# Visualisasi interval kepercayaan
+plt.figure(figsize=(10, 6))
+diff_mean = np.mean(sample2) - np.mean(sample1)
+plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+plt.axvline(x=diff_mean, color='r', linestyle='-', label=f'Perbedaan Mean: {diff_mean:.2f}')
+plt.axvline(x=conf_interval[0], color='g', linestyle='--', label=f'Batas Bawah: {conf_interval[0]:.2f}')
+plt.axvline(x=conf_interval[1], color='g', linestyle='--', label=f'Batas Atas: {conf_interval[1]:.2f}')
+plt.fill_between([conf_interval[0], conf_interval[1]], -0.1, 0.1, color='g', alpha=0.2)
+plt.title('Interval Kepercayaan 95% untuk Perbedaan Rata-rata')
+plt.xlabel('Perbedaan (Kelompok 2 - Kelompok 1)')
+plt.yticks([])
+plt.legend()
+plt.tight_layout()
+plt.show()
+```
+
+### 5. Linear Algebra Basics
+
+Aljabar linear adalah cabang matematika yang mempelajari vektor, matriks, dan transformasi linear. Ini sangat penting dalam data science untuk pengolahan data multidimensi dan machine learning.
+
+**Konsep Dasar:**
+
+-   Vektor: array satu dimensi dari angka
+-   Matriks: array dua dimensi dari angka
+-   Operasi matriks: penjumlahan, perkalian, transpose, invers
+
+**Contoh Kode:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# 1. Operasi Vektor
+v1 = np.array([2, 3, 4])
+v2 = np.array([1, 0, 2])
+
+# Penjumlahan vektor
+v_sum = v1 + v2
+
+# Perkalian skalar
+v_scaled = 2 * v1
+
+# Dot product
+dot_product = np.dot(v1, v2)
+
+print("Vektor 1:", v1)
+print("Vektor 2:", v2)
+print("Penjumlahan:", v_sum)
+print("Skalar × Vektor 1:", v_scaled)
+print("Dot Product:", dot_product)
+
+# Visualisasi vektor 2D
+plt.figure(figsize=(10, 8))
+plt.quiver(0, 0, 3, 4, angles='xy', scale_units='xy', scale=1, color='r', label='Vektor [3,4]')
+plt.quiver(0, 0, 1, 2, angles='xy', scale_units='xy', scale=1, color='b', label='Vektor [1,2]')
+plt.quiver(0, 0, 4, 6, angles='xy', scale_units='xy', scale=1, color='g', label='Penjumlahan [4,6]')
+plt.xlim(-1, 6)
+plt.ylim(-1, 8)
+plt.grid(True)
+plt.axhline(y=0, color='k', linestyle='-', alpha=0.3)
+plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+plt.legend()
+plt.title('Visualisasi Vektor 2D')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.axis('equal')
+plt.show()
+
+# 2. Operasi Matriks
+A = np.array([[1, 2, 3],
+             [4, 5, 6]])
+
+B = np.array([[7, 8],
+             [9, 10],
+             [11, 12]])
+
+# Perkalian matriks
+C = np.dot(A, B)
+
+print("\nMatriks A:")
+print(A)
+print("\nMatriks B:")
+print(B)
+print("\nPerkalian matriks A·B:")
+print(C)
+
+# 3. Eigenvalues & Eigenvectors
+square_matrix = np.array([[4, 2],
+                          [1, 3]])
+
+eigenvalues, eigenvectors = np.linalg.eig(square_matrix)
+
+print("\nMatriks:")
+print(square_matrix)
+print("\nEigenvalues:")
+print(eigenvalues)
+print("\nEigenvectors:")
+print(eigenvectors)
+
+# Visualisasi transformasi linear
+def plot_transformation(matrix):
+    # Titik-titik asli
+    x = np.array([[0, 1, 1, 0, 0], [0, 0, 1, 1, 0]])
+
+    # Transformasi
+    y = np.dot(matrix, x)
+
+    plt.figure(figsize=(10, 10))
+
+    # Plot titik asli
+    plt.plot(x[0], x[1], 'b-', label='Objek Asli')
+    plt.fill(x[0], x[1], 'b', alpha=0.2)
+
+    # Plot titik hasil transformasi
+    plt.plot(y[0], y[1], 'r-', label='Hasil Transformasi')
+    plt.fill(y[0], y[1], 'r', alpha=0.2)
+
+    # Visualisasi eigenvektor
+    for i in range(len(eigenvalues)):
+        eigv = eigenvectors[:, i]
+        plt.quiver(0, 0, eigv[0], eigv[1], angles='xy', scale_units='xy',
+                  scale=1, color='g', width=0.01, label=f'Eigenvektor {i+1}')
+
+    plt.grid(True)
+    plt.axhline(y=0, color='k', linestyle='-', alpha=0.3)
+    plt.axvline(x=0, color='k', linestyle='-', alpha=0.3)
+    plt.xlim(-2, 5)
+    plt.ylim(-2, 5)
+    plt.legend()
+    plt.title('Transformasi Linear dan Eigenvektor')
+    plt.axis('equal')
+    plt.show()
+
+plot_
+```
+
 ## 1. Feature Engineering yang Lebih Mendalam
 
 Feature Engineering adalah salah satu tahap paling krusial dalam pipeline data science yang dapat sangat meningkatkan performa model.
@@ -27,20 +2133,26 @@ Feature Engineering adalah salah satu tahap paling krusial dalam pipeline data s
 #### b. Categorical Encoding yang Lebih Kompleks
 
 -   **One-Hot Encoding**: Untuk variabel nominal
+
     ```python
     df_encoded = pd.get_dummies(df, columns=['city', 'color'])
     ```
+
 -   **Label Encoding**: Untuk variabel ordinal
+
     ```python
     from sklearn.preprocessing import LabelEncoder
     le = LabelEncoder()
     df['education_encoded'] = le.fit_transform(df['education_level'])
     ```
+
 -   **Target Encoding**: Mengganti kategori dengan rata-rata target untuk kategori tersebut
+
     ```python
     means = df.groupby('city')['target'].mean()
     df['city_encoded'] = df['city'].map(means)
     ```
+
 -   **Weight of Evidence (WoE)**: Berguna untuk model regresi logistik
 
     ```python
@@ -123,11 +2235,13 @@ Feature Engineering adalah salah satu tahap paling krusial dalam pipeline data s
 -   **Filter Methods**
 
     -   Variance Threshold
+
         ```python
         from sklearn.feature_selection import VarianceThreshold
         selector = VarianceThreshold(threshold=0.1)
         X_selected = selector.fit_transform(X)
         ```
+
     -   Correlation-based
 
         ```python
@@ -142,6 +2256,7 @@ Feature Engineering adalah salah satu tahap paling krusial dalam pipeline data s
         ```
 
     -   Statistical Tests
+
         ```python
         from sklearn.feature_selection import SelectKBest, f_classif
         selector = SelectKBest(f_classif, k=10)
@@ -160,6 +2275,7 @@ Feature Engineering adalah salah satu tahap paling krusial dalam pipeline data s
         ```
 
 -   **Embedded Methods**
+
     -   Lasso Regression (L1 regularization)
         ```python
         from sklearn.linear_model import Lasso
@@ -3174,6 +5290,7 @@ Deteksi anomali pada data deret waktu memerlukan pendekatan khusus karena adanya
     - ARIMA-based Methods
 
 2. **Machine Learning Methods**:
+
     - Autoencoders untuk deret waktu
     - LSTM Autoencoders
     - Isolation Forest dengan fitur temporal
