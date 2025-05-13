@@ -1,4 +1,4 @@
-#### Python Fundamentals
+# Python Fundamentals
 
 ### Python Basics
 
@@ -97,11 +97,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 ```
 
-### Pandas Basics
+## Pandas Basics
 
 Pandas adalah library Python yang sangat powerful untuk manipulasi dan analisis data.
 
-## Data Manipulation with Pandas
+### Data Manipulation with Pandas
 
 **Series dan DataFrame**
 
@@ -265,7 +265,7 @@ def get_status(row):
 df['status'] = df.apply(get_status, axis=1)
 ```
 
-### SQL Basics
+## SQL Basics
 
 SQL (Structured Query Language) adalah bahasa standar untuk mengakses dan memanipulasi database.
 
